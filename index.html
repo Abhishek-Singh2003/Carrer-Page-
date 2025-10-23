@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Link Preview — Company logo & open in new tab</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9aa4b2;
+            --accent: #6ee7b7;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-2: rgba(255, 255, 255, 0.02);
+            --radius: 16px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-size: clamp(16px, 2.5vw, 18px); /* Responsive base font size */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #0a1a2f 0%, #1a2a44 50%, #0f2a3b 100%);
+            background-attachment: fixed;
+            color: #e4f1ff;
+            padding: clamp(16px, 4vw, 28px); /* Responsive padding */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 920px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+            border-radius: var(--radius);
+            padding: clamp(16px, 3vw, 26px); /* Responsive padding */
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: clamp(12px, 3vw, 20px); /* Responsive gap */
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: clamp(18px, 3vw, 20px); /* Responsive font size */
+            letter-spacing: -0.2px;
+        }
+
+        p.lead {
+            margin: 0 0 18px 0;
+            color: var(--muted);
+            font-size: clamp(12px, 2.2vw, 13px);
+        }
+
+        .left {
+            padding: 8px 4px 8px 0;
+        }
+
+        label {
+            display: block;
+            font-size: clamp(12px, 2.2vw, 13px);
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: clamp(8px, 2vw, 12px);
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+            border-radius: 12px;
+            background: #0b1c2c;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            color: inherit;
+            outline: none;
+            font-size: clamp(13px, 2.3vw, 14px);
+            min-height: 44px; /* Touch-friendly height */
+        }
+
+        .btn {
+            padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+            background: linear-gradient(90deg, var(--accent), #3dd9b0);
+            color: #06211a;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 6px 18px rgba(30, 140, 110, 0.12);
+            min-height: 44px; /* Touch-friendly height */
+            font-size: clamp(13px, 2.3vw, 14px);
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: var(--accent);
+            border: 1px dashed rgba(110, 231, 183, 0.18);
+            box-shadow: none;
+        }
+
+        .helpers {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hint {
+            font-size: clamp(11px, 2vw, 12px);
+            color: var(--muted);
+        }
+
+        /* Preview card (right) */
+        .preview {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.01));
+            border-radius: 14px;
+            padding: clamp(12px, 2.5vw, 18px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 2vw, 12px);
+        }
+
+        .logo {
+            width: clamp(60px, 10vw, 72px);
+            height: clamp(60px, 10vw, 72px);
+            border-radius: 12px;
+            background: var(--glass-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #fff;
+        }
+
+        .company-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .company-name {
+            font-size: clamp(14px, 2.5vw, 16px);
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+
+        .company-host {
+            font-size: clamp(11px, 2vw, 12px);
+            color: var(--muted);
+        }
+
+        .preview .meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .meta .chip {
+            background: rgba(255, 255, 255, 0.02);
+            padding: clamp(6px, 1.5vw, 8px) clamp(8px, 2vw, 10px);
+            border-radius: 10px;
+            font-size: clamp(11px, 2vw, 12px);
+            color: var(--muted);
+            border: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .open-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .open-actions .open-now {
+            padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            background: linear-gradient(90deg, #7ee7c9, #3dd9b0);
+            color: #04221a;
+            min-height: 44px; /* Touch-friendly height */
+            font-size: clamp(13px, 2.3vw, 14px);
+        }
+
+        footer.small {
+            text-align: center;
+            margin-top: 14px;
+            font-size: clamp(11px, 2vw, 12px);
+            color: var(--muted);
+        }
+
+        .highlight-name {
+            font-weight: bold;
+            color: #ff4500;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .highlight-name:hover {
+            color: #1e90ff;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: clamp(12px, 3vw, 18px);
+            }
+
+            .preview {
+                order: -1; /* Preview card on top for mobile */
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 12px;
+                gap: 16px;
+            }
+
+            h1 {
+                font-size: clamp(16px, 4vw, 18px);
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn,
+            .open-actions .open-now {
+                width: 100%; /* Full-width buttons on small screens */
+            }
+
+            .logo {
+                width: clamp(48px, 12vw, 60px);
+                height: clamp(48px, 12vw, 60px);
+            }
+
+            .company-name {
+                font-size: clamp(13px, 3vw, 14px);
+            }
+
+            .company-host {
+                font-size: clamp(10px, 2.5vw, 11px);
+            }
+
+            .meta .chip {
+                font-size: clamp(10px, 2.5vw, 11px);
+            }
+        }
+
+        @media (max-width: 400px) {
+            :root {
+                font-size: clamp(14px, 4vw, 16px); /* Smaller base font for very small screens */
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .preview {
+                padding: 10px;
+            }
+
+            .logo {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" role="application" aria-label="Link preview app">
+        <div class="left">
+            <h1>👉 Preview the company from the link and open it in a new tab</h1>
+
+            <label for="example">Choose example (from your uploaded list):</label>
+            <select id="example">
+                <option value="">— Select example (optional) —</option>
+                <option value="https://www.247.ai/careers/">[24]7.ai</option>
+<option value="https://www.accolite.com/careers">Accolite</option>
+<option value="https://www.accord-soft.com/career.php">Accord Software</option>
+<option value="https://www.accenture.com/us-en/careers">Accenture</option>
+<option value="https://careers.adobe.com/us/en/">Adobe</option>
+<option value="https://agile.co.uk/career-opportunities/">Agile Solutions</option>
+<option value="https://www.airbase.com/careers">Airbase</option>
+<option value="https://careers.airbnb.com/">Airbnb</option>
+<option value="https://careers.airtel.com/">Airtel X Labs</option>
+<option value="https://www.ajio.com/help/Careers">Ajio</option>
+<option value="https://www.akamai.com/us-en/about/careers/">Akamai</option>
+<option value="https://careers.aliyun.com/en/campus/home">Alibaba Cloud</option>
+<option value="https://careers.amadeus.com/">Amadeus Labs</option>
+<option value="https://www.amazon.jobs/">Amazon</option>
+<option value="https://www.amdocs.com/careers">Amdocs</option>
+<option value="https://www.americanexpress.com/en-us/careers/">American Express</option>
+<option value="https://apna.co/careers">Apna</option>
+<option value="https://www.appdynamics.com/company/careers">AppDynamics</option>
+<option value="https://appen.com/careers/">Appen</option>
+<option value="https://www.apple.com/careers/us/">Apple</option>
+<option value="https://appinventiv.com/careers/">AppInventiv</option>
+<option value="https://www.arcesium.com/careers/">Arcesium</option>
+<option value="https://www.arista.com/en/careers">Arista Networks</option>
+<option value="https://www.aryaka.com/company/careers/">Aryaka Networks</option>
+<option value="https://asseco.com/career/">Asseco</option>
+<option value="https://www.athenahealth.com/careers">Athena Health</option>
+<option value="https://atlan.com/careers">Atlan</option>
+<option value="https://www.atlassian.com/company/careers">Atlassian</option>
+<option value="https://www.autodesk.com/careers/overview">Autodesk</option>
+<option value="https://www.avaya.com/en/careers/">Avaya</option>
+<option value="https://www.bazaarvoice.com/company/careers/">Bazaarvoice</option>
+<option value="https://careers.bigbasket.com/">BigBasket</option>
+<option value="https://www.birlasoft.com/careers">Birlasoft</option>
+<option value="https://www.blackbuck.com/team-blackbuck.html">BlackBuck</option>
+<option value="https://careers.bloomberg.com/">Bloomberg L.P.</option>
+<option value="https://www.bmc.com/careers/careers.html">BMC Software</option>
+<option value="https://www.bny.com/corporate/global/en/careers/work-with-us.html">BNY Mellon</option>
+<option value="https://careers.booking.com/">Booking.com</option>
+<option value="https://www.bottomline.com/about/careers/jobs">Bottomline Technologies</option>
+<option value="https://www.box.com/careers">Box</option>
+<option value="https://www.browserstack.com/careers">BrowserStack</option>
+<option value="https://bukuwarung.com/careers">BukuWarung</option>
+<option value="https://byjus.com/careers/">Byju's</option>
+<option value="https://careers.cadence.com/">Cadence</option>
+<option value="https://www.capgemini.com/us-en/careers/">Capgemini</option>
+<option value="https://www.cardekho.com/info/career">CarDekho</option>
+<option value="https://www.carwale.com/career/">CarWale</option>
+<option value="https://www.cashfree.com/careers/">Cashfree</option>
+<option value="https://www.celigo.com/careers/">Celigo</option>
+<option value="https://careers.cerner.com/">Cerner</option>
+<option value="https://www.cgi.com/en/careers">CGI Inc.</option>
+<option value="https://www.chargebee.com/careers/">Chargebee</option>
+<option value="https://chronus.com/careers">Chronus</option>
+<option value="https://jobs.cisco.com/">Cisco</option>
+<option value="https://www.citadel.com/careers/">Citadel</option>
+<option value="https://www.citadelsecurities.com/careers/">Citadel Securities</option>
+<option value="https://careers.cloud.com/">Citrix</option>
+<option value="https://classplusapp.com/careers/">Classplus</option>
+<option value="https://www.clearglass.com/careers">ClearGlass</option>
+<option value="https://careers.cleartrip.com/">Cleartrip</option>
+<option value="https://www.cloudera.com/careers.html">Cloudera</option>
+<option value="https://innovations.trilogy.com/join-trilogy-innovations/hiring-events/">Codenation Innovation Labs</option>
+<option value="https://www.codingninjas.com/careers">CodingNinjas</option>
+<option value="https://careers.cognizant.com/">Cognizant</option>
+<option value="https://www.coinbase.com/careers">Coinbase</option>
+<option value="https://coindcx.com/careers">CoinDCX</option>
+<option value="https://recruiterflow.com/coinswitch/jobs">CoinSwitch Kuber</option>
+<option value="https://careers.commvault.com/">Commvault</option>
+<option value="https://www.coupang.jobs/">Coupang</option>
+<option value="https://cradlepoint.com/about/careers/">Cradlepoint</option>
+<option value="https://cred.club/careers">Cred</option>
+<option value="https://www.crowdstrike.com/careers/">CrowdStrike</option>
+<option value="https://www.csscorp.com/careers/">CSS Corp</option>
+<option value="https://www.cvent.com/en/careers">Cvent</option>
+<option value="https://www.databricks.com/company/careers">Databricks</option>
+<option value="https://www.dataiku.com/careers/">Dataiku</option>
+<option value="https://jobs.dell.com/">Dell Technologies</option>
+<option value="https://devrev.ai/careers">DevRev</option>
+<option value="https://www.telekom.com/en/careers">Deutsche Telekom</option>
+<option value="https://jobs.lever.co/hotstar">Disney+ Hotstar</option>
+<option value="https://careers.directi.com/">Directi</option>
+<option value="https://discord.com/careers">Discord</option>
+<option value="https://droom.in/career">Droom</option>
+<option value="https://www.druva.com/about/careers/">Druva</option>
+<option value="https://careers.dxc.com/global/en/">DXC Technology</option>
+<option value="https://careers.ebayinc.com/">eBay</option>
+<option value="https://www.elastic.co/about/careers">Elastic</option>
+<option value="https://ea.gr8people.com/">Electronic Arts (EA)</option>
+<option value="https://www.extentia.com/careers">Extentia</option>
+<option value="https://www.f5.com/company/careers">F5 Networks</option>
+<option value="https://www.fico.com/en/careers">FICO</option>
+<option value="https://careers.fisglobal.com/us/en">FIS Global</option>
+<option value="https://jobs.fidelity.com/">Fidelity Investments</option>
+<option value="https://www.flipkartcareers.com/">Flipkart</option>
+<option value="https://www.flocksafety.com/careers">Flock</option>
+<option value="https://fractal.ai/careers/">Fractal Analytics</option>
+<option value="https://www.freshworks.com/company/careers/">Freshworks</option>
+<option value="https://www.fujitsu.com/global/about/careers/">Fujitsu</option>
+<option value="https://careers.fynd.com/">Fynd</option>
+<option value="https://jobs.gartner.com/">Gartner</option>
+<option value="https://github.com/about/careers">GitHub</option>
+<option value="https://about.gitlab.com/jobs/">GitLab</option>
+<option value="https://www.glance.com/careers/">Glance (InMobi Group)</option>
+<option value="https://www.globallogic.com/careers/">GlobalLogic</option>
+<option value="https://jobs.glovoapp.com/en/">Glovo</option>
+<option value="https://careers.godaddy.com/">GoDaddy</option>
+<option value="https://www.goldmansachs.com/careers/">Goldman Sachs</option>
+<option value="https://careers.google.com/">Google</option>
+<option value="https://www.grab.careers/en/">Grab</option>
+<option value="https://www.gravitontrading.com/careers.html">Graviton Research Capital</option>
+<option value="https://www.blinkit.com/careers">Grofers (now Blinkit)</option>
+<option value="https://groww.in/careers">Groww</option>
+<option value="https://www.grouponcareers.com/">Groupon</option>
+<option value="https://www.hackerrank.com/careers">HackerRank</option>
+<option value="https://www.happiestminds.com/careers/">Happiest Minds</option>
+<option value="https://hashnode.freshteam.com/jobs">Hashnode</option>
+<option value="https://www.hcltech.com/careers">HCLTech</option>
+<option value="https://www.healthifyme.com/careers">HealthifyMe</option>
+<option value="https://careers.hitachi.com/">Hitachi</option>
+<option value="https://careers.honeywell.com/">Honeywell</option>
+<option value="https://jobs.hp.com/">HP (Hewlett-Packard)</option>
+<option value="https://www.huawei.com/ca/careers">Huawei Technologies</option>
+<option value="https://www.ibm.com/careers">IBM</option>
+<option value="https://imerit.net/careers/">iMerit</option>
+<option value="https://www.impelsys.com/careers/">Impelsys</option>
+<option value="https://www.indeed.jobs/">Indeed</option>
+<option value="https://careers.indiamart.com/">IndiaMart</option>
+<option value="https://www.indusvalleypartners.com/careers/">Indus Valley Partners</option>
+<option value="https://www.informatica.com/about-us/careers.html">Informatica</option>
+<option value="https://www.inmobi.com/company/careers/">InMobi</option>
+<option value="https://innovaccer.com/careers/">Innovaccer</option>
+<option value="https://www.intuit.com/careers/">Intuit</option>
+<option value="https://iongroup.com/careers/">ION Group</option>
+<option value="https://www.iopex.com/careers/">iOPEX</option>
+<option value="https://jobs.iqvia.com/">Iqvia</option>
+<option value="https://www.ittiam.com/careers/">Ittiam Systems</option>
+<option value="https://ivycomptech.com/careers">Ivy Comptech</option>
+<option value="https://www.juspay.in/careers">Juspay</option>
+<option value="https://www.kaseya.com/careers/">Kaseya</option>
+<option value="https://www.kla.com/careers">KLA Corporation</option>
+<option value="https://www.klarna.com/careers/">Klarna</option>
+<option value="https://www.kreeti.com/careers">Kreeti Technologies</option>
+<option value="https://kritikalsolutions.com/job-openings/">Kritikal Solutions</option>
+<option value="https://www.ltimindtree.com/careers/">L&T Infotech (LTI Mindtree)</option>
+<option value="https://careers.linkedin.com/">LinkedIn</option>
+<option value="https://careers.lionbridge.com/">Lionbridge</option>
+<option value="https://www.litmusworld.com/careers/">Litmus World</option>
+<option value="https://www.logicmonitor.com/careers">LogicMonitor</option>
+<option value="https://jobs.jobvite.com/logitech/">Logitech</option>
+<option value="https://www.lseg.com/en/careers">London Stock Exchange Group (LSEG)</option>
+<option value="https://careers.makemytrip.com/">MakeMyTrip</option>
+<option value="https://careers.mastercard.com/us/en">Mastercard</option>
+<option value="https://in.mathworks.com/company/jobs/opportunities.html">MathWorks</option>
+<option value="https://careers.media.net/">Media.net</option>
+<option value="https://www.meesho.io/jobs">Meesho</option>
+<option value="https://www.sw.siemens.com/en-US/careers/">Mentor Graphics (Siemens EDA)</option>
+<option value="https://www.metacareers.com/">Meta</option>
+<option value="https://careers.microsoft.com/">Microsoft</option>
+<option value="https://www.micron.com/about/careers">Micron Technology</option>
+<option value="https://www.mindtickle.com/careers/">MindTickle</option>
+<option value="https://www.mobikwik.com/careers">MobiKwik</option>
+<option value="https://www.motorolasolutions.com/en_us/about/careers.html">Motorola Solutions</option>
+<option value="https://www.mozilla.org/en-US/careers/">Mozilla</option>
+<option value="https://careers.mphasis.com/">Mphasis</option>
+<option value="https://www.ni.com/en-us/about-ni/careers.html">National Instruments (NI)</option>
+<option value="https://navi.com/careers">Navi</option>
+<option value="https://www.ncr.com/careers">NCR Corporation</option>
+<option value="https://careers.nec.com/">NEC Corporation</option>
+<option value="https://jobs.netflix.com/">Netflix</option>
+<option value="https://www.netapp.com/company/careers/">NetApp</option>
+<option value="https://www.netcracker.com/careers/">Netcracker</option>
+<option value="https://newgensoft.com/company/careers/">Newgen Software</option>
+<option value="https://www.nice.com/careers">NICE Ltd</option>
+<option value="https://careers.n-ix.com/">N-iX</option>
+<option value="https://www.nokia.com/about-us/careers/">Nokia</option>
+<option value="https://www.novopay.in/careers">Novopay</option>
+<option value="https://careers.services.global.ntt/en">NTT Data</option>
+<option value="https://www.nvidia.com/en-in/about-nvidia/careers/">Nvidia</option>
+<option value="https://o9solutions.com/careers/">O9 Solutions</option>
+<option value="https://open.money/career">Open Financial Technologies</option>
+<option value="https://careers.oracle.com/">Oracle</option>
+<option value="https://www.orange-business.com/en/careers">Orange Business Services</option>
+<option value="https://www.palantir.com/careers/">Palantir Technologies</option>
+<option value="https://jobs.paloaltonetworks.com/en">Palo Alto Networks</option>
+<option value="https://careers.pypl.com/home/">Paypal</option>
+<option value="https://paytm.com/careers">Paytm</option>
+<option value="https://corporate.payu.com/careers/">PayU</option>
+<option value="https://careers.peoplestrong.com/">PeopleStrong</option>
+<option value="https://careers.persistent.com/">Persistent Systems</option>
+<option value="https://pharmeasy.in/careers/">PharmEasy</option>
+<option value="https://www.phonepe.com/careers/">Phonepe</option>
+<option value="https://polygon.technology/careers">Polygon Technology</option>
+<option value="https://www.postman.com/company/careers/">Postman</option>
+<option value="https://practo.app.param.ai/jobs/">Practo</option>
+<option value="https://careers.priceline.com/">Priceline</option>
+<option value="https://www.privado.ai/careers">Privado.ai</option>
+<option value="https://career-portal.prodapt.com/">Prodapt</option>
+<option value="https://careers.publicissapient.com/">Publicis Sapient</option>
+<option value="https://pubmatic.com/careers/home/">PubMatic</option>
+<option value="http://careers.qualcomm.com/careers">Qualcomm</option>
+<option value="https://www.careers.quora.com/">Quora</option>
+<option value="https://symphony.rakuten.com/careers">Rakuten Symphony</option>
+<option value="https://ramp.com/careers">Ramp</option>
+<option value="https://razorpay.com/jobs/">Razorpay</option>
+<option value="https://www.redhat.com/en/jobs">Red Hat</option>
+<option value="https://www.reprise.com/careers">Reprise</option>
+<option value="https://www.rubrik.com/company/careers">Rubrik</option>
+<option value="https://www.jiosaavn.com/corporate/careers">Saavan</option>
+<option value="https://www.sabre.com/careers/">Sabre Corporation</option>
+<option value="https://www.salesforce.com/company/careers/">Salesforce</option>
+<option value="https://www.samsungsds.com/us/careers/about_careers.html">Samsung SDS</option>
+<option value="https://jobs.sap.com/">SAP</option>
+<option value="https://www.brevo.com/careers/">SendinBlue</option>
+<option value="https://serpapi.com/careers">SerpApi</option>
+<option value="https://careers.servicenow.com/">ServiceNow</option>
+<option value="https://careers.peopleinteractive.in/">Shaadi.com</option>
+<option value="https://sharechat.com/careers">ShareChat</option>
+<option value="https://shipsy.io/careers/">Shipsy</option>
+<option value="https://careers.shopee.ph/">Shopee</option>
+<option value="https://www.shopify.com/careers">Shopify</option>
+<option value="https://www.sigmoid.com/careers/">Sigmoid</option>
+<option value="https://www.skillvertex.com/careers/">SkillVertex</option>
+<option value="https://www.echostar.com/careers">Sling Media</option>
+<option value="https://www.sonyjobs.com/">Sony Software Solutions</option>
+<option value="https://www.sprinklr.com/careers/">Sprinklr</option>
+<option value="https://www.squadstack.ai/sales-jobs">Squadstack</option>
+<option value="https://stripe.com/jobs">Stripe</option>
+<option value="https://careers.swiggy.com/">Swiggy</option>
+<option value="https://careers.synopsys.com/">Synopsys</option>
+<option value="https://careers.teksystems.com/en">TEK Systems</option>
+<option value="https://tekion.com/careers">Tekion Corp</option>
+<option value="https://careers.tencent.com/en-us/home.html">Tencent</option>
+<option value="https://careers.teradata.com/">Teradata</option>
+<option value="https://www.thoughtspot.com/careers">ThoughtSpot</option>
+<option value="https://www.thoughtworks.com/en-us/careers">ThoughtWorks</option>
+<option value="https://www.topcoder.com/gigs">Topcoder</option>
+<option value="https://www.toptal.com/careers">Toptal</option>
+<option value="https://tower-research.com/careers/">Tower Research Capital</option>
+<option value="https://turvo.com/careers/">Turvo</option>
+<option value="https://www.twilio.com/en-us/company/jobs">Twilio</option>
+<option value="https://careers.x.com/en">Twitter</option>
+<option value="https://www.uber.com/us/en/careers/">Uber</option>
+<option value="https://www.ubisoft.com/en-us/company/careers">Ubisoft</option>
+<option value="https://unicommerce.com/life-at-unicommerce/">Unicommerce</option>
+<option value="https://www.unisys.com/careers/">Unisys</option>
+<option value="https://www.upgrad.com/careers/">Upgrad</option>
+<option value="https://jobs.lever.co/upstox">Upstox</option>
+<option value="https://careers.urbancompany.com/">Urban Company</option>
+<option value="https://careers.viasat.com/">Viasat</option>
+<option value="https://corporate.visa.com/en/careers.html">Visa</option>
+<option value="https://www.broadcom.com/company/careers">VMware</option>
+<option value="https://whatfix.com/careers/">Whatfix</option>
+<option value="https://careers.wipro.com/">Wipro</option>
+<option value="https://wooqer.com/careers/">Wooqer</option>
+<option value="https://www.workday.com/en-us/company/careers/overview.html">Workday</option>
+<option value="https://www.xicom.biz/careers/">Xicom Technologies</option>
+<option value="https://www.yahooinc.com/careers/">Yahoo</option>
+<option value="https://yellow.ai/career/">Yellow.ai</option>
+<option value="https://www.yugabyte.com/careers/">Yugabyte</option>
+<option value="http://careers.zerodha.com/">Zerodha</option>
+<option value="https://www.zeta.tech/in/careers">Zeta</option>
+<option value="https://www.zomato.com/careers">Zomato</option>
+<option value="https://www.zoomcar.com/careers">ZoomCar</option>
+            </select>
+
+            <div style="height: 12px;"></div>
+
+            <label for="url">Enter full URL (include https://):</label>
+            <div class="input-row">
+                <input id="url" type="url" placeholder="https://www.example.com/careers or https://company.com" />
+                <button id="previewBtn" class="btn" title="Preview & Open">Preview</button>
+            </div>
+
+            <div class="helpers">
+                <button id="openBtn" class="btn ghost" disabled>Open in new tab</button>
+                <div class="hint">🙌 If the domain is valid, the logo appears automatically; otherwise, the site name shows</div>
+            </div>
+
+            <div style="height: 18px;"></div>
+            <div class="hint">Example companies taken from your uploaded PDF (Company Career Sites)</div>
+        </div>
+
+        <aside class="preview" id="previewCard" aria-live="polite">
+            <div class="logo-row">
+                <div class="logo" id="logoWrap" title="Company logo">
+                    <img id="logoImg" src="" alt="" style="display:none">
+                    <div id="logoFallback" style="font-weight:700;color:var(--muted);font-size:18px">?</div>
+                </div>
+
+                <div class="company-info">
+                    <div class="company-name" id="companyName">No company selected</div>
+                    <div class="company-host" id="companyHost">--</div>
+                </div>
+            </div>
+
+            <div class="meta" id="meta">
+                <div class="chip" id="meta1">URL: —</div>
+                <div class="chip" id="meta2">Status: waiting</div>
+            </div>
+
+            <div class="open-actions">
+                <div style="font-size:13px;color:var(--muted)">Preview ready</div>
+                <div>
+                    <button id="openNow" class="open-now" disabled>Open Now →</button>
+                </div>
+            </div>
+
+            <footer class="small">
+                Made ❤️ by
+                <a href="https://github.com/Abhishek-Singh2003" target="_blank" rel="noopener noreferrer" class="highlight-name">
+                    Abhishek Singh
+                </a> 🚀
+            </footer>
+        </aside>
+    </div>
+
+    <script>
+        // Utilities
+        const urlInput = document.getElementById('url');
+        const previewBtn = document.getElementById('previewBtn');
+        const openBtn = document.getElementById('openBtn');
+        const openNow = document.getElementById('openNow');
+        const exampleSelect = document.getElementById('example');
+
+        const logoImg = document.getElementById('logoImg');
+        const logoFallback = document.getElementById('logoFallback');
+        const companyName = document.getElementById('companyName');
+        const companyHost = document.getElementById('companyHost');
+        const meta1 = document.getElementById('meta1');
+        const meta2 = document.getElementById('meta2');
+        const previewCard = document.getElementById('previewCard');
+
+        // Extract hostname safely
+        function getHostname(raw) {
+            try {
+                const u = new URL(raw);
+                return u.hostname.replace(/^www\./i, '');
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Nicely format host to a readable company name (basic heuristic)
+        function prettifyHost(host) {
+            if (!host) return 'Unknown';
+            const parts = host.split('.');
+            let candidate = parts[0];
+            for (let p of parts) {
+                if (!['www', 'careers', 'jobs', 'careers-us', 'careers-en', 'careers-us-en'].includes(p.toLowerCase())) {
+                    candidate = p;
+                    break;
+                }
+            }
+            candidate = candidate.replace(/[-_]/g, ' ');
+            return candidate.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+
+        // Attempt to set logo using Clearbit, fallback to google favicon if Clearbit fails
+        function setLogoForDomain(domain) {
+            const clearbit = 'https://logo.clearbit.com/' + domain + '?size=128';
+            const favicon = 'https://www.google.com/s2/favicons?sz=128&domain=' + domain;
+
+            logoImg.style.display = 'none';
+            logoImg.src = ''; // reset
+            logoFallback.style.display = 'flex';
+            logoFallback.textContent = '?';
+
+            logoImg.onload = () => {
+                logoFallback.style.display = 'none';
+                logoImg.style.display = 'block';
+            };
+            logoImg.onerror = () => {
+                logoImg.src = favicon;
+                logoImg.onerror = () => {
+                    logoImg.style.display = 'none';
+                    logoFallback.style.display = 'flex';
+                };
+            };
+            logoImg.src = clearbit;
+        }
+
+        function updatePreview(url) {
+            const host = getHostname(url);
+            if (!host) {
+                meta1.textContent = 'URL: invalid';
+                meta2.textContent = 'Status: invalid URL';
+                companyName.textContent = 'Invalid URL';
+                companyHost.textContent = '--';
+                openBtn.disabled = true;
+                openNow.disabled = true;
+                return;
+            }
+
+            const pretty = prettifyHost(host);
+            companyName.textContent = pretty;
+            companyHost.textContent = host;
+            meta1.textContent = 'URL: ' + url;
+            meta2.textContent = 'Status: preview ready';
+            openBtn.disabled = false;
+            openNow.disabled = false;
+
+            setLogoForDomain(host);
+            logoFallback.textContent = pretty && pretty.length ? pretty.charAt(0).toUpperCase() : '?';
+        }
+
+        // Validation helper
+        function normalizeUrl(maybe) {
+            if (!maybe) return null;
+            try {
+                new URL(maybe);
+                return maybe;
+            } catch (e) {
+                try {
+                    const add = 'https://' + maybe;
+                    new URL(add);
+                    return add;
+                } catch (e2) {
+                    return null;
+                }
+            }
+        }
+
+        // Open in new tab safely
+        function openInNewTab(url) {
+            try {
+                const win = window.open(url, '_blank', 'noopener,noreferrer');
+                if (win) win.focus();
+            } catch (e) {
+                alert('Unable to open new tab: ' + e.message);
+            }
+        }
+
+        // Event listeners
+        previewBtn.addEventListener('click', () => {
+            const raw = urlInput.value.trim() || exampleSelect.value.trim();
+            const normalized = normalizeUrl(raw);
+            if (!normalized) {
+                alert('Please enter a valid URL (try including https://).');
+                return;
+            }
+            updatePreview(normalized);
+        });
+
+        openBtn.addEventListener('click', () => {
+            const raw = urlInput.value.trim() || exampleSelect.value.trim();
+            const normalized = normalizeUrl(raw);
+            if (!normalized) {
+                alert('Please enter a valid URL first.');
+                return;
+            }
+            openInNewTab(normalized);
+        });
+
+        openNow.addEventListener('click', () => {
+            const raw = urlInput.value.trim() || exampleSelect.value.trim();
+            const normalized = normalizeUrl(raw);
+            if (!normalized) {
+                alert('Please enter a valid URL first.');
+                return;
+            }
+            openInNewTab(normalized);
+        });
+
+        exampleSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val) {
+                urlInput.value = val;
+                const normalized = normalizeUrl(val);
+                if (normalized) updatePreview(normalized);
+            }
+        });
+
+        urlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                previewBtn.click();
+                e.preventDefault();
+            }
+        });
+
+        openBtn.disabled = true;
+        openNow.disabled = true;
+    </script>
+</body>
+
+</html>
