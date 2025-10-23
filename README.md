@@ -1,5 +1,3 @@
-# Link Preview — Company Logo & Open in New Tab
-
 ![Preview](preview.png)
 > *A sleek, responsive web app to preview any company career link with auto logo detection and one-click open in new tab.*
 
